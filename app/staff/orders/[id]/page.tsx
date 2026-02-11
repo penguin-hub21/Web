@@ -20,7 +20,8 @@ async function getOrder(id: string) {
   return order;
 }
 
-export default async function StaffOrderDetails({ params }: { params: { id: string } }) {
+export default async function StaffOrderDetails({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const user = await getCurrentUser();
   
   if (!user || !["STAFF", "ADMIN"].includes(user.role)) {
@@ -31,7 +32,7 @@ export default async function StaffOrderDetails({ params }: { params: { id: stri
     );
   }
 
-  const order = await getOrder(params.id);
+  const order = await getOrder(id);
 
   if (!order) {
     notFound();

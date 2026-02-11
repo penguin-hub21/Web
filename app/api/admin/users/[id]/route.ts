@@ -5,11 +5,11 @@ import { requireAdmin } from "@/lib/auth";
 // DELETE user
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin();
-    const { id } = params;
+    const { id } = await params;
     await db.user.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -21,11 +21,11 @@ export async function DELETE(
 // PATCH update user role
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin();
-    const { id } = params;
+    const { id } = await params;
     const { role } = await req.json();
 
     if (!["USER", "STAFF", "ADMIN"].includes(role)) {
