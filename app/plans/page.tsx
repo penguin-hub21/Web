@@ -7,12 +7,12 @@ import { Container } from "@/components/layout/container";
 import { SpotlightButton } from "@/components/ui/spotlight-button";
 import { Button } from "@/components/ui/button";
 import { GlowCard } from "@/components/ui/glow-card";
-import { Check, Cpu, HardDrive, Zap, Shield, Server, Network, Globe } from "lucide-react";
+import { Check, Cpu, HardDrive, Zap, Shield, Server, Network, Globe, Bot, Swords, LayoutGrid } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import {
-  budgetPlans,
+  discordBotPlans,
   minecraftPlans,
   vpsPlans,
   dedicatedPlans,
@@ -20,7 +20,7 @@ import {
   formatPrice,
 } from "@/lib/plans-data";
 
-type Tab = "minecraft" | "budget" | "vps" | "dedicated";
+type Tab = "minecraft" | "discord-bot" | "vps" | "dedicated";
 
 export default function PlansPage() {
   const [activeTab, setActiveTab] = useState<Tab>("minecraft");
@@ -46,7 +46,7 @@ export default function PlansPage() {
             </span>
           </motion.h1>
           <p className="text-lg text-neutral-400 max-w-2xl mx-auto mb-8">
-            From ₹50/mo budget servers to enterprise AMD EPYC dedicated machines. India & Singapore.
+            From ₹50/mo Discord bots to enterprise AMD EPYC dedicated machines.
           </p>
 
           {/* Currency Toggle */}
@@ -75,26 +75,54 @@ export default function PlansPage() {
 
           {/* Tab Switcher */}
           <div className="flex justify-center flex-wrap gap-2">
-            {([
-              { key: "minecraft", label: "⚔️ Minecraft", count: minecraftPlans.length },
-              { key: "budget", label: "💡 Budget", count: budgetPlans.length },
-              { key: "vps", label: "🖥️ VPS", count: vpsPlans.length },
-              { key: "dedicated", label: "⚡ Dedicated", count: dedicatedPlans.length },
-            ] as const).map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={cn(
-                  "px-5 py-2.5 rounded-lg text-sm font-medium transition-all border",
-                  activeTab === tab.key
-                    ? "bg-white/10 border-white/20 text-white shadow-lg"
-                    : "border-transparent text-neutral-400 hover:text-white hover:bg-white/5"
-                )}
-              >
-                {tab.label}{" "}
-                <span className="ml-1 text-xs opacity-50">({tab.count})</span>
-              </button>
-            ))}
+            <button
+              onClick={() => setActiveTab("minecraft")}
+              className={cn(
+                "px-5 py-2.5 rounded-lg text-sm font-medium transition-all border flex items-center gap-2",
+                activeTab === "minecraft"
+                  ? "bg-white/10 border-white/20 text-white shadow-lg"
+                  : "border-transparent text-neutral-400 hover:text-white hover:bg-white/5"
+              )}
+            >
+              <Swords className="h-4 w-4" /> Minecraft
+              <span className="ml-1 text-xs opacity-50">({minecraftPlans.length})</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("discord-bot")}
+              className={cn(
+                "px-5 py-2.5 rounded-lg text-sm font-medium transition-all border flex items-center gap-2",
+                activeTab === "discord-bot"
+                  ? "bg-white/10 border-white/20 text-white shadow-lg"
+                  : "border-transparent text-neutral-400 hover:text-white hover:bg-white/5"
+              )}
+            >
+              <Bot className="h-4 w-4" /> Discord Bot
+              <span className="ml-1 text-xs opacity-50">({discordBotPlans.length})</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("vps")}
+              className={cn(
+                "px-5 py-2.5 rounded-lg text-sm font-medium transition-all border flex items-center gap-2",
+                activeTab === "vps"
+                  ? "bg-white/10 border-white/20 text-white shadow-lg"
+                  : "border-transparent text-neutral-400 hover:text-white hover:bg-white/5"
+              )}
+            >
+              <LayoutGrid className="h-4 w-4" /> VPS
+              <span className="ml-1 text-xs opacity-50">({vpsPlans.length})</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("dedicated")}
+              className={cn(
+                "px-5 py-2.5 rounded-lg text-sm font-medium transition-all border flex items-center gap-2",
+                activeTab === "dedicated"
+                  ? "bg-white/10 border-white/20 text-white shadow-lg"
+                  : "border-transparent text-neutral-400 hover:text-white hover:bg-white/5"
+              )}
+            >
+              <Server className="h-4 w-4" /> Dedicated
+              <span className="ml-1 text-xs opacity-50">({dedicatedPlans.length})</span>
+            </button>
           </div>
         </Container>
       </section>
@@ -234,7 +262,7 @@ export default function PlansPage() {
                                   : "bg-white/10 hover:bg-white/20 text-white"
                               )}
                             >
-                              Deploy Server
+                              Order Now
                             </Button>
                           </Link>
                         </div>
@@ -245,16 +273,16 @@ export default function PlansPage() {
               </motion.div>
             )}
 
-            {/* ─── BUDGET PLANS ─── */}
-            {activeTab === "budget" && (
+            {/* ─── DISCORD BOT PLANS ─── */}
+            {activeTab === "discord-bot" && (
               <motion.div
-                key="budget"
+                key="discord-bot"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
               >
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {budgetPlans.map((plan, i) => (
+                  {discordBotPlans.map((plan, i) => (
                     <motion.div
                       key={plan.slug}
                       initial={{ opacity: 0, scale: 0.95 }}
@@ -297,7 +325,7 @@ export default function PlansPage() {
                         </div>
                         <Link href={`/order?plan=${plan.slug}`}>
                           <SpotlightButton className="w-full justify-center">
-                            Deploy Now
+                            Order Now
                           </SpotlightButton>
                         </Link>
                       </GlowCard>
@@ -385,7 +413,7 @@ export default function PlansPage() {
                         ) : (
                           <Link href={`/order?plan=${plan.slug}`}>
                             <SpotlightButton className="w-full justify-center">
-                              Deploy Server
+                              Order Now
                             </SpotlightButton>
                           </Link>
                         )}
@@ -460,7 +488,7 @@ export default function PlansPage() {
                         ) : (
                           <Link href={`/order?plan=${plan.slug}`}>
                             <SpotlightButton className="w-full justify-center">
-                              Deploy Server
+                              Order Now
                             </SpotlightButton>
                           </Link>
                         )}

@@ -9,7 +9,7 @@ const features = [
   {
     icon: Zap,
     title: "Blazing Fast Speed",
-    desc: "Powered by Ryzen 9 7950X processors and NVMe Gen 4 SSDs for instant load times and zero lag.",
+    desc: "Powered by AMD EPYC processors and NVMe Gen 4 SSDs for instant load times and zero lag.",
     colSpan: "md:col-span-2",
     bg: "bg-gradient-to-br from-purple-500/10 to-blue-500/10"
   },

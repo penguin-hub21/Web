@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { sendOrderWebhook } from "@/lib/discord";
 
 // Create an order
 export async function POST(req: NextRequest) {
@@ -18,8 +19,10 @@ export async function POST(req: NextRequest) {
 
     // Create a product record on-the-fly if not using DB products
     let resolvedProductId = productId;
+    let product = null;
+
     if (!resolvedProductId && planSlug) {
-      let product = await db.product.findUnique({ where: { slug: planSlug } });
+      product = await db.product.findUnique({ where: { slug: planSlug } });
       if (!product) {
         product = await db.product.create({
           data: {
@@ -34,10 +37,8 @@ export async function POST(req: NextRequest) {
         });
       }
       resolvedProductId = product.id;
-    }
-
-    if (!resolvedProductId) {
-      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    } else if (resolvedProductId) {
+       product = await db.product.findUnique({ where: { id: resolvedProductId } });
     }
 
     const order = await db.order.create({
@@ -49,6 +50,22 @@ export async function POST(req: NextRequest) {
       },
       include: { product: true },
     });
+
+    // Send Discord Webhook
+    // Resolve plan details for the webhook
+    const allPlans = [...minecraftPlans, ...vpsPlans, ...dedicatedPlans, proxyPlan, ...discordBotPlans];
+    const planDetails = allPlans.find(p => p.slug === planSlug) || { 
+      name: planName, 
+      ram: product.ram + "MB", 
+      cpu: product.cpu + "%", 
+      disk: product.disk + "MB" 
+    };
+
+    try {
+        await sendOrderWebhook(order, session, planDetails);
+    } catch (err) {
+        console.error("Webhook error:", err);
+    }
 
     return NextResponse.json({ order });
   } catch (error) {

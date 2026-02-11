@@ -47,17 +47,13 @@ export function Footer() {
               <li><Link href="/minecraft-vps" className="hover:text-purple-400 transition-colors">Minecraft Hosting</Link></li>
               <li><Link href="/vps" className="hover:text-purple-400 transition-colors">VPS Hosting</Link></li>
               <li><Link href="/dedicated" className="hover:text-purple-400 transition-colors">Dedicated Servers</Link></li>
-              <li><Link href="/web" className="hover:text-purple-400 transition-colors">Web Hosting</Link></li>
             </ul>
           </div>
 
           <div className="lg:col-span-2">
             <h3 className="mb-6 text-sm font-bold text-white uppercase tracking-wider">Support</h3>
             <ul className="space-y-4 text-sm text-neutral-400">
-              <li><Link href="/status" className="hover:text-purple-400 transition-colors">System Status</Link></li>
-              <li><Link href="/ticket" className="hover:text-purple-400 transition-colors">Open Ticket</Link></li>
-              <li><Link href="/docs" className="hover:text-purple-400 transition-colors">Knowledge Base</Link></li>
-              <li><Link href="/discord" className="hover:text-purple-400 transition-colors">Discord Community</Link></li>
+              <li><Link href="https://discord.gg/XQ8a8GueMk" className="hover:text-purple-400 transition-colors">Discord Community</Link></li>
             </ul>
           </div>
 
@@ -83,7 +79,12 @@ export function Footer() {
         </div>
         
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-neutral-500">&copy; {new Date().getFullYear()} LumenNode. All rights reserved.</p>
+          <div className="flex flex-col items-center md:items-start gap-1">
+            <p className="text-sm text-neutral-500">&copy; {new Date().getFullYear()} LumenNode. All rights reserved.</p>
+            <p className="text-xs text-neutral-600">
+              Engineered by <Link href="https://www.instagram.com/utkarsh_gupta_011?igsh=dG41MWNtaXVybjhr" target="_blank" className="text-purple-500/80 hover:text-purple-400 transition-colors font-medium">Utkarsh Gupta</Link>
+            </p>
+          </div>
           <div className="flex space-x-6 text-sm text-neutral-500">
             <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>

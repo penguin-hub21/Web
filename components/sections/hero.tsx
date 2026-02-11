@@ -37,7 +37,7 @@ export function Hero() {
            className="mb-8 inline-flex items-center rounded-full border border-purple-500/30 bg-purple-500/10 px-3 py-1 text-sm text-purple-200 backdrop-blur-sm"
         >
           <span className="flex h-2 w-2 rounded-full bg-purple-400 mr-2 animate-pulse"></span>
-          Now Available: Dubai & Singapore Locations
+          Now Available: India Location
         </motion.div>
 
         <motion.h1 
@@ -57,7 +57,7 @@ export function Hero() {
           className="max-w-2xl text-lg text-neutral-400 mb-10 md:text-xl leading-relaxed"
         >
           Experience the next generation of server hosting. 
-          Unmatched Ryzen 9 performance, 10Gbps uplink, and 
+          Unmatched AMD EPYC performance, 10Gbps uplink, and 
           path.net DDoS protection. Starting at just <span className="text-white font-semibold">₹50/mo</span>.
         </motion.p>
 
@@ -67,12 +67,12 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="flex flex-col sm:flex-row gap-6"
         >
-          <Link href="/plans">
+          <Link href="https://discord.gg/XQ8a8GueMk" target="_blank">
             <SpotlightButton className="h-14 px-8 text-base">
               Get Started <ArrowRight className="ml-2 h-4 w-4" />
             </SpotlightButton>
           </Link>
-          <Link href="/#pricing">
+          <Link href="/plans">
             <Button size="lg" variant="outline" className="h-14 px-8 text-base border-white/10 bg-white/5 hover:bg-white/10 text-white">
               View Pricing
             </Button>
@@ -85,7 +85,7 @@ export function Hero() {
            className="mt-20 w-full max-w-5xl rounded-xl border border-white/10 bg-black/50 backdrop-blur-xl shadow-2xl shadow-purple-500/10 overflow-hidden"
         >
           <Image 
-            src="/control_panel.png" 
+            src="/Screenshot_2026-02-10_102307.png" 
             alt="LumenNode Control Panel" 
             width={1200} 
             height={675} 

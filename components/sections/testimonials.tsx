@@ -26,7 +26,7 @@ const testimonials = [
   {
     name: "David Kim",
     role: "Freelance Developer",
-    content: "Best price to performance ratio I've found. The Ryzen 9s destroy the Xeons I used to use.",
+    content: "Best price to performance ratio I've found. The AMD EPYC processors destroy the Xeons I used to use.",
     rating: 5,
   },
    {

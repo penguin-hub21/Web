@@ -18,10 +18,20 @@ import {
   vpsPlans,
   dedicatedPlans,
   proxyPlan,
+  discordBotPlans, // Added discordBotPlans import
   formatPrice,
   type Plan,
 } from "@/lib/plans-data";
 import Link from "next/link";
+
+// New allPlans array construction
+const allPlans = [
+  proxyPlan,
+  ...discordBotPlans,
+  ...minecraftPlans,
+  ...vpsPlans,
+  ...dedicatedPlans,
+];
 
 type OrderStep = "login" | "confirm" | "payment" | "waiting" | "complete";
 
@@ -49,8 +59,8 @@ function OrderPageContent() {
   // Resolve plan from slug
   const resolvedPlan = (() => {
     if (!planSlug) return null;
-    // Check budget plans
-    const budget = budgetPlans.find((p) => p.slug === planSlug);
+    // Check discord-bot plans
+    const budget = discordBotPlans.find((p) => p.slug === planSlug);
     if (budget) return { ...budget, finalPrice: budget.priceINR };
 
     // Check MC plans

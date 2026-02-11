@@ -3,7 +3,7 @@
 export interface Plan {
   name: string;
   slug: string;
-  category: "budget" | "minecraft-intel" | "minecraft-amd" | "proxy" | "vps" | "dedicated";
+  category: "discord-bot" | "minecraft-intel" | "minecraft-amd" | "proxy" | "vps" | "dedicated";
   ram: string;
   cpu: string;
   disk: string;
@@ -31,12 +31,12 @@ export const proxyPlan: Plan = {
   location: "India",
 };
 
-// ─── Budget Plans (Lumen/Nebula/Orion/Zenith) ───
-export const budgetPlans: Plan[] = [
+// ─── Discord Bot Plans (Lumen/Nebula/Orion/Zenith) ───
+export const discordBotPlans: Plan[] = [
   {
     name: "Lumen",
     slug: "lumen",
-    category: "budget",
+    category: "discord-bot",
     ram: "2 GB",
     cpu: "50%",
     disk: "50 GB",
@@ -47,7 +47,7 @@ export const budgetPlans: Plan[] = [
   {
     name: "Nebula",
     slug: "nebula",
-    category: "budget",
+    category: "discord-bot",
     ram: "4 GB",
     cpu: "100%",
     disk: "10 GB",
@@ -58,7 +58,7 @@ export const budgetPlans: Plan[] = [
   {
     name: "Orion",
     slug: "orion",
-    category: "budget",
+    category: "discord-bot",
     ram: "6 GB",
     cpu: "150%",
     disk: "15 GB",
@@ -70,7 +70,7 @@ export const budgetPlans: Plan[] = [
   {
     name: "Zenith",
     slug: "zenith",
-    category: "budget",
+    category: "discord-bot",
     ram: "8 GB",
     cpu: "200%",
     disk: "25 GB",

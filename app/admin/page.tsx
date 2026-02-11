@@ -18,11 +18,20 @@ import {
   RefreshCw,
   ChevronDown,
   AlertCircle,
+  Trash2,
+  Shield,
+  UserCog,
+  Settings,
+  Globe,
+  Database,
+  Mail,
+  Lock,
 } from "lucide-react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-type Tab = "overview" | "orders" | "users";
+type Tab = "overview" | "orders" | "users" | "settings";
 
 interface Stats {
   totalUsers: number;
@@ -103,6 +112,59 @@ export default function AdminPage() {
     }
   };
 
+  const handleUpdateRole = async (userId: string, currentRole: string) => {
+    const newRole = prompt("Enter new role (USER, STAFF, ADMIN):", currentRole);
+    if (!newRole || newRole === currentRole) return;
+
+    if (!["USER", "STAFF", "ADMIN"].includes(newRole)) {
+      alert("Invalid role. Must be USER, STAFF, or ADMIN.");
+      return;
+    }
+
+    setActionLoading(userId);
+    try {
+      const res = await fetch(`/api/admin/users/${userId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: newRole }),
+      });
+      if (!res.ok) throw new Error();
+      fetchData();
+    } catch {
+      alert("Failed to update role");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleDeleteUser = async (userId: string) => {
+    if (!confirm("Are you sure you want to delete this user? This cannot be undone.")) return;
+    setActionLoading(userId);
+    try {
+      const res = await fetch(`/api/admin/users/${userId}`, { method: "DELETE" });
+      if (!res.ok) throw new Error();
+      fetchData();
+    } catch {
+      alert("Failed to delete user");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleDeleteOrder = async (orderId: string) => {
+    if (!confirm("Are you sure you want to delete this order?")) return;
+    setActionLoading(orderId);
+    try {
+      const res = await fetch(`/api/admin/orders/${orderId}`, { method: "DELETE" });
+      if (!res.ok) throw new Error();
+      fetchData();
+    } catch {
+      alert("Failed to delete order");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/");
@@ -155,11 +217,19 @@ export default function AdminPage() {
       <div className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/10">
         <Container className="flex items-center justify-between py-3">
           <div className="flex items-center gap-6">
+            <div className="relative h-8 w-8 overflow-hidden rounded-lg bg-gradient-to-tr from-purple-600 to-blue-600 mr-3">
+               <Image 
+                 src="/logo.jpeg" 
+                 alt="Logo" 
+                 fill
+                 className="object-cover"
+               />
+            </div>
             <h1 className="text-lg font-bold text-white font-heading">
-              ⚡ LumenNodes Admin
+              LumenNodes Admin
             </h1>
             <nav className="flex gap-1">
-              {(["overview", "orders", "users"] as Tab[]).map((t) => (
+              {(["overview", "orders", "users", "settings"] as Tab[]).map((t) => (
                 <button
                   key={t}
                   onClick={() => setTab(t)}
@@ -297,9 +367,20 @@ export default function AdminPage() {
                           {new Date(order.createdAt).toLocaleString()}
                         </p>
                       </div>
-                      <span className="text-xl font-bold text-white font-mono">
-                        ₹{order.amountINR}
-                      </span>
+                      <div className="flex items-center gap-4">
+                        <span className="text-xl font-bold text-white font-mono">
+                          ₹{order.amountINR}
+                        </span>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => handleDeleteOrder(order.id)}
+                          disabled={actionLoading === order.id}
+                          className="h-8 w-8 text-neutral-500 hover:text-red-400 hover:bg-red-500/10"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm mb-4">
@@ -391,6 +472,7 @@ export default function AdminPage() {
                       <th className="py-3 px-4 text-center">Servers</th>
                       <th className="py-3 px-4 text-center">Ptero ID</th>
                       <th className="py-3 px-4 text-right">Joined</th>
+                      <th className="py-3 px-4 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -429,10 +511,109 @@ export default function AdminPage() {
                         <td className="py-3 px-4 text-right text-neutral-500">
                           {new Date(u.createdAt).toLocaleDateString()}
                         </td>
+                        <td className="py-3 px-4 text-right">
+                          <div className="flex justify-end gap-2">
+                             <Button 
+                               size="sm" 
+                               variant="outline" 
+                               className="h-8 border-white/10 text-neutral-400 hover:text-white"
+                               onClick={() => handleUpdateRole(u.id, u.role)}
+                               disabled={actionLoading === u.id}
+                             >
+                               <UserCog className="h-3 w-3 mr-1" /> Role
+                             </Button>
+                             <Button 
+                               size="sm" 
+                               variant="destructive" 
+                               className="h-8 bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20"
+                               onClick={() => handleDeleteUser(u.id)}
+                               disabled={actionLoading === u.id}
+                             >
+                               <Trash2 className="h-3 w-3" />
+                             </Button>
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ─── SETTINGS ─── */}
+          {tab === "settings" && (
+            <motion.div
+              key="settings"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+            >
+              <h2 className="text-lg font-bold text-white mb-6">Admin Settings</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                 {/* Pterodactyl Settings */}
+                 <GlowCard className="p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                       <div className="p-2 rounded-lg bg-blue-500/20 text-blue-400">
+                          <Server className="h-5 w-5" />
+                       </div>
+                       <h3 className="text-lg font-bold text-white">Pterodactyl</h3>
+                    </div>
+                    <p className="text-sm text-neutral-400 mb-6">
+                       Configure API keys, URL, and server allocation settings.
+                    </p>
+                    <div className="space-y-3">
+                       <Button variant="outline" className="w-full justify-start border-white/10 text-neutral-300 hover:text-white hover:bg-white/5">
+                          <Database className="h-4 w-4 mr-2" /> Manage Nodes
+                       </Button>
+                       <Button variant="outline" className="w-full justify-start border-white/10 text-neutral-300 hover:text-white hover:bg-white/5">
+                          <Lock className="h-4 w-4 mr-2" /> API Keys
+                       </Button>
+                    </div>
+                 </GlowCard>
+
+                 {/* Website Settings */}
+                 <GlowCard className="p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                       <div className="p-2 rounded-lg bg-purple-500/20 text-purple-400">
+                          <Globe className="h-5 w-5" />
+                       </div>
+                       <h3 className="text-lg font-bold text-white">Website</h3>
+                    </div>
+                    <p className="text-sm text-neutral-400 mb-6">
+                       Manage global site settings, maintenance mode, and SEO.
+                    </p>
+                    <div className="space-y-3">
+                       <Button variant="outline" className="w-full justify-start border-white/10 text-neutral-300 hover:text-white hover:bg-white/5">
+                          <Settings className="h-4 w-4 mr-2" /> General Config
+                       </Button>
+                       <Button variant="outline" className="w-full justify-start border-white/10 text-neutral-300 hover:text-white hover:bg-white/5">
+                          <Mail className="h-4 w-4 mr-2" /> Email Templates
+                       </Button>
+                    </div>
+                 </GlowCard>
+
+                 {/* System Status */}
+                 <GlowCard className="p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                       <div className="p-2 rounded-lg bg-green-500/20 text-green-400">
+                          <Shield className="h-5 w-5" />
+                       </div>
+                       <h3 className="text-lg font-bold text-white">System</h3>
+                    </div>
+                    <p className="text-sm text-neutral-400 mb-6">
+                       View system health, logs, and security audits.
+                    </p>
+                    <div className="space-y-3">
+                       <Button variant="outline" className="w-full justify-start border-white/10 text-neutral-300 hover:text-white hover:bg-white/5">
+                          <AlertCircle className="h-4 w-4 mr-2" /> View Logs
+                       </Button>
+                       <Button variant="outline" className="w-full justify-start border-white/10 text-neutral-300 hover:text-white hover:bg-white/5">
+                          <UserCog className="h-4 w-4 mr-2" /> Access Control
+                       </Button>
+                    </div>
+                 </GlowCard>
               </div>
             </motion.div>
           )}

@@ -67,7 +67,7 @@ export default async function StaffOrdersPage() {
                 </td>
                 <td className="px-6 py-4">{new Date(order.createdAt).toLocaleDateString()}</td>
                 <td className="px-6 py-4 text-right">
-                  <Link href={`/admin/orders/${order.id}`}>
+                  <Link href={`/staff/orders/${order.id}`}>
                     <Button size="sm" variant="outline" className="border-white/10 bg-white/5 hover:bg-white/10">
                       View Details
                     </Button>
