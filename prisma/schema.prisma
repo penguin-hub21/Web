@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      Role     @default(USER)
+  pteroId   Int?     // Pterodactyl user ID
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders    Order[]
+  servers   Server[]
+  invoices  Invoice[]
+  tickets   Ticket[]
+}
+
+model Product {
+  id          String      @id @default(cuid())
+  name        String
+  slug        String      @unique
+  category    Category
+  description String?
+  ram         String
+  cpu         String
+  disk        String
+  backups     Int         @default(0)
+  priceINR    Int         // price in paise (smallest unit) or whole rupees
+  priceUSD    Float?
+  processor   Processor   @default(INTEL)
+  location    String      @default("India")
+  stock       Int         @default(-1)  // -1 = unlimited
+  nestId      Int?        // Pterodactyl nest ID
+  eggId       Int?        // Pterodactyl egg ID
+  isActive    Boolean     @default(true)
+  isFeatured  Boolean     @default(false)
+  sortOrder   Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  orders      Order[]
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  productId     String
+  product       Product     @relation(fields: [productId], references: [id])
+  status        OrderStatus @default(PENDING_PAYMENT)
+  amountINR     Int
+  upiTxnId      String?     // UPI transaction ID from user
+  paymentProof  String?     // optional screenshot URL
+  adminNote     String?
+  serverId      String?     @unique
+  server        Server?     @relation(fields: [serverId], references: [id])
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  invoice       Invoice?
+}
+
+model Server {
+  id          String       @id @default(cuid())
+  name        String
+  pteroId     Int?         // Pterodactyl server ID
+  identifier  String?      // Pterodactyl server identifier
+  ip          String?
+  port        Int?
+  status      ServerStatus @default(PROVISIONING)
+  userId      String
+  user        User         @relation(fields: [userId], references: [id])
+  order       Order?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Invoice {
+  id        String        @id @default(cuid())
+  orderId   String        @unique
+  order     Order         @relation(fields: [orderId], references: [id])
+  amount    Int
+  status    InvoiceStatus @default(PENDING)
+  dueDate   DateTime
+  paidAt    DateTime?
+  userId    String
+  user      User          @relation(fields: [userId], references: [id])
+  createdAt DateTime      @default(now())
+}
+
+model Ticket {
+  id        String       @id @default(cuid())
+  subject   String
+  message   String?
+  status    TicketStatus @default(OPEN)
+  userId    String
+  user      User         @relation(fields: [userId], references: [id])
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+enum Role {
+  USER
+  ADMIN
+  STAFF
+}
+
+enum Category {
+  MINECRAFT_BUDGET
+  MINECRAFT_INTEL
+  MINECRAFT_AMD
+  VPS
+  DEDICATED
+  PROXY
+}
+
+enum Processor {
+  INTEL
+  AMD
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  AWAITING_VERIFICATION
+  APPROVED
+  DENIED
+  PROVISIONING
+  COMPLETED
+  CANCELLED
+}
+
+enum ServerStatus {
+  PROVISIONING
+  ONLINE
+  OFFLINE
+  SUSPENDED
+}
+
+enum InvoiceStatus {
+  PENDING
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum TicketStatus {
+  OPEN
+  CLOSED
+  ANSWERED
+}
