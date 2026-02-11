@@ -1,12 +1,9 @@
-
 import { notFound } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { Container } from "@/components/layout/container";
 import { GlowCard } from "@/components/ui/glow-card";
-import { Button } from "@/components/ui/button";
-import { CheckCircle2, XCircle, Clock, Server, ArrowLeft } from "lucide-react";
+import { Server, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -24,9 +21,9 @@ async function getOrder(id: string) {
 }
 
 export default async function StaffOrderDetails({ params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions);
+  const user = await getCurrentUser();
   
-  if (!session || !["STAFF", "ADMIN"].includes(session.user.role)) {
+  if (!user || !["STAFF", "ADMIN"].includes(user.role)) {
     return (
       <Container className="py-20 text-center">
         <h1 className="text-2xl font-bold text-red-400">Unauthorized</h1>
@@ -120,7 +117,7 @@ export default async function StaffOrderDetails({ params }: { params: { id: stri
                </div>
                <div className="grid grid-cols-2 gap-6">
                   <div>
-                    <label className="text-xs text-neutral-500 uppercase font-bold">User Rate</label>
+                    <label className="text-xs text-neutral-500 uppercase font-bold">User Role</label>
                     <p className="text-neutral-300 capitalize">{order.user.role.toLowerCase()}</p>
                   </div>
                   <div>

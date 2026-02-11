@@ -1,22 +1,16 @@
-
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth";
 
 // DELETE user
 export async function DELETE(
   req: Request,
   { params }: { params: { id: string } }
 ) {
-  const session = await getServerSession(authOptions);
-  if (!session || session.user.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   try {
+    await requireAdmin();
     const { id } = params;
-    await prisma.user.delete({ where: { id } });
+    await db.user.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Delete user error:", error);
@@ -29,12 +23,8 @@ export async function PATCH(
   req: Request,
   { params }: { params: { id: string } }
 ) {
-  const session = await getServerSession(authOptions);
-  if (!session || session.user.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   try {
+    await requireAdmin();
     const { id } = params;
     const { role } = await req.json();
 
@@ -42,7 +32,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Invalid role" }, { status: 400 });
     }
 
-    const updatedUser = await prisma.user.update({
+    const updatedUser = await db.user.update({
       where: { id },
       data: { role },
     });
